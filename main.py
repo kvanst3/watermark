@@ -12,12 +12,12 @@ window.config(padx=10, pady=10)
 label = tkinter.Label(text="Upload image", font=("Arial"))
 label.grid(column=1, row=0)
 
-# File Explorer
 
 # file explorer window
 
 def browseFiles():
-    filename = filedialog.askopenfilename(
+    file = filedialog.askopenfile(
+        mode='rb',
         initialdir=os.path.expanduser('~/Pictures'),
         title="Select a File",
         filetypes=(
@@ -27,7 +27,12 @@ def browseFiles():
     )
 
     # Change label contents
-    label_file_explorer.configure(text="File Opened: " + (filename.split('/')[-1]))
+    label_file_explorer.configure(text="File Opened: " + os.path.basename(file.name))
+    if file:
+        data = file.read()
+        file.close()
+        print("I got %d bytes from this file." % len(data))
+
 
 
 
