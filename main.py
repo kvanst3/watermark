@@ -3,102 +3,108 @@ from tkinter import filedialog
 import os.path
 from PIL import ImageTk, Image, ImageDraw, ImageFont
 
-IMG = None
-IMG_COPY = None
+class WaterMarker():
 
-window = tkinter.Tk()
-window.title("Watermarker")
-window.minsize(width=500, height=500)
-window.config(padx=10, pady=10)
+    def __init__(self):
+        self.img = None
+        self.img_copy = None
 
-
-# Title Label
-
-label_img_placeholder = tkinter.Label(text="Upload image", font=("Arial"))
-label_img_placeholder.grid(column=1, row=0)
+        window = tkinter.Tk()
+        window.title("Watermarker")
+        window.minsize(width=500, height=500)
+        window.config(padx=10, pady=10)
 
 
-# file explorer window
+        # Title Label
 
-def browseFiles():
-    file_path = filedialog.askopenfilename(
-        initialdir=os.path.expanduser('~/Pictures'),
-        title="Select a File",
-        filetypes=(
-            ("Png files", "*.png*"),
-            ("all files", "*.*")
+        self.label_img_placeholder = tkinter.Label(text="Upload image", font=("Arial"))
+        self.label_img_placeholder.grid(column=1, row=0)
+         # File explorer Label
+
+        self.label_file_explorer = tkinter.Label(text="*upload an image to appose a watermark", font="Arial")
+        self.label_file_explorer.grid(column=2, row=3)
+
+        # Browse Button
+
+        self.browse_button = tkinter.Button(text="Browse", command=self.browseFiles)
+        self.browse_button.grid(column=2, row=2, sticky='W')
+
+
+        # Watermark Button
+
+        self.wtmrk_button = tkinter.Button(text="Watermark it!", command=self.apply_watermark)
+
+        # Watermark entry box
+
+        self.wtmrk_text = tkinter.Entry(width=35)
+
+        # Save Button
+
+        self.save_button = tkinter.Button(text="Save", command=self.save_file)
+
+        window.mainloop()
+
+
+
+    # file explorer window
+
+    def browseFiles(self):
+        file_path = filedialog.askopenfilename(
+            initialdir=os.path.expanduser('~/Pictures'),
+            title="Select a File",
+            filetypes=(
+                ("Png files", "*.png*"),
+                ("all files", "*.*")
+            )
         )
-    )
-    global IMG
-    IMG = Image.open(file_path).convert("RGBA")
-    display_image(IMG)
+        
+        self.img = Image.open(file_path).convert("RGBA")
+        self.display_image(self.img)
 
-    # move stuff around, change labels name, etc
+        # move stuff around, change labels name, etc
 
-    label_img_placeholder.grid(columnspan=2)
-    browse_button.grid(column=1, row=2)
-    label_file_explorer.grid(column=2, row=2, sticky='E')
-    label_file_explorer.config(text=os.path.basename(file_path))
+        self.label_img_placeholder.grid(columnspan=2)
+        self.browse_button.grid(column=1, row=2)
+        self.label_file_explorer.grid(column=2, row=2, sticky='E')
+        self.label_file_explorer.config(text=os.path.basename(file_path))
 
-    wtmrk_button.grid(column=2, row=3, sticky='e')
-    wtmrk_text.grid(column=1, row=3, sticky='w', columnspan=2)
-
-
-def apply_watermark():
-    global IMG_COPY
-    IMG_COPY = IMG.copy()
-    width, height = IMG_COPY.size
-
-    draw = ImageDraw.Draw(IMG_COPY)
-    text = wtmrk_text.get()
-
-    font = ImageFont.truetype('/usr/share/fonts/opentype/malayalam/Chilanka-Regular.otf', 26)
-    textwidth, textheight = draw.textsize(text, font)
-
-    # calculate the x,y coordinates of the text
-    margin = 10
-    x = width - textwidth - margin
-    y = height - textheight - margin
-
-    # draw watermark in the bottom right corner
-    draw.text((x, y), text, font=font, fill=(255,255,255,150))
-
-    display_image(IMG_COPY)
-    wtmrk_text.delete(0, 'end')
-    save_button.grid(column=1, row=4, sticky='w')
-
-def display_image(img):
-    display_img = ImageTk.PhotoImage(img)
-    label_img_placeholder.config(image=display_img)
-    label_img_placeholder.image = display_img
-
-def save_file():
-    file = filedialog.asksaveasfile(mode='wb', defaultextension=".png")
-    if file is None: # asksaveasfile return `None` if dialog closed with "cancel".
-        return
-    IMG.save(file)
-
-# File explorer Label
-
-label_file_explorer = tkinter.Label(text="*upload an image to appose a watermark", font="Arial")
-label_file_explorer.grid(column=2, row=3)
-
-# Browse Button
-
-browse_button = tkinter.Button(text="Browse", command=browseFiles)
-browse_button.grid(column=2, row=2, sticky='W')
+        self.wtmrk_button.grid(column=2, row=3, sticky='e')
+        self.wtmrk_text.grid(column=1, row=3, sticky='w', columnspan=2)
 
 
-# Watermark Button
+    def apply_watermark(self):
+        
+        self.img_copy = self.img.copy()
+        width, height = self.img_copy.size
 
-wtmrk_button = tkinter.Button(text="Watermark it!", command=apply_watermark)
+        draw = ImageDraw.Draw(self.img_copy)
+        text = self.wtmrk_text.get()
 
-# Watermark entry box
+        font = ImageFont.truetype('/usr/share/fonts/opentype/malayalam/Chilanka-Regular.otf', 26)
+        textwidth, textheight = draw.textsize(text, font)
 
-wtmrk_text = tkinter.Entry(width=35)
+        # calculate the x,y coordinates of the text
+        margin = 10
+        x = width - textwidth - margin
+        y = height - textheight - margin
 
-# Save Button
+        # draw watermark in the bottom right corner
+        draw.text((x, y), text, font=font, fill=(255,255,255,150))
 
-save_button = tkinter.Button(text="Save", command=save_file)
+        self.display_image(self.img_copy)
+        self.wtmrk_text.delete(0, 'end')
+        self.save_button.grid(column=1, row=4, sticky='w')
 
-window.mainloop()
+    def display_image(self, img):
+        display_img = ImageTk.PhotoImage(img)
+        self.label_img_placeholder.config(image=display_img)
+        self.label_img_placeholder.image = display_img
+
+    def save_file(self):
+        file = filedialog.asksaveasfile(mode='wb', defaultextension=".png")
+        if file is None: # asksaveasfile return `None` if dialog closed with "cancel".
+            return
+        self.img_copy.save(file)
+
+
+wm = WaterMarker()
