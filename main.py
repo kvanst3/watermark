@@ -30,18 +30,17 @@ def browseFiles():
     )
     global IMG
     IMG = Image.open(file_path).convert("RGBA")
-    display_image = ImageTk.PhotoImage(IMG)
-    label_img_placeholder.config(image=display_image)
+    display_image()
 
     # move stuff around, change labels name, etc
 
     label_img_placeholder.grid(columnspan=2)
-    label_img_placeholder.image = display_image
     button.grid(column=1, row=2)
     label_file_explorer.grid(column=2, row=2, sticky='E')
     label_file_explorer.config(text=os.path.basename(file_path))
 
-    wtmrk_button.grid(column=1, row=3, sticky='W')
+    wtmrk_button.grid(column=1, row=3, sticky='e')
+    wtmrk_text.grid(column=1, row=3, sticky='w', columnspan=2)
 
 
 def apply_watermark():
@@ -60,8 +59,13 @@ def apply_watermark():
 
     # draw watermark in the bottom right corner
     draw.text((x, y), text, font=font, fill=(255,255,255,150))
-    IMG.show()
-    
+
+    display_image()
+
+def display_image():
+    display_img = ImageTk.PhotoImage(IMG)
+    label_img_placeholder.config(image=display_img)
+    label_img_placeholder.image = display_img
 
 
 # Browse Button
@@ -73,6 +77,7 @@ button.grid(column=2, row=2, sticky='W')
 # Watermark Button
 
 wtmrk_button = tkinter.Button(text="Watermark it!", command=apply_watermark)
+wtmrk_text = tkinter.Entry(width=35)
 
 
 # File explorer Label
