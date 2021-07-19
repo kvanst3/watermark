@@ -35,7 +35,7 @@ def browseFiles():
     # move stuff around, change labels name, etc
 
     label_img_placeholder.grid(columnspan=2)
-    button.grid(column=1, row=2)
+    browse_button.grid(column=1, row=2)
     label_file_explorer.grid(column=2, row=2, sticky='E')
     label_file_explorer.config(text=os.path.basename(file_path))
 
@@ -47,7 +47,7 @@ def apply_watermark():
     width, height = IMG.size
 
     draw = ImageDraw.Draw(IMG)
-    text = "sample watermark"
+    text = wtmrk_text.get()
 
     font = ImageFont.truetype('/usr/share/fonts/opentype/malayalam/Chilanka-Regular.otf', 26)
     textwidth, textheight = draw.textsize(text, font)
@@ -61,29 +61,40 @@ def apply_watermark():
     draw.text((x, y), text, font=font, fill=(255,255,255,150))
 
     display_image()
+    save_button.grid(column=2, row=3, sticky='e')
 
 def display_image():
     display_img = ImageTk.PhotoImage(IMG)
     label_img_placeholder.config(image=display_img)
     label_img_placeholder.image = display_img
 
-
-# Browse Button
-
-button = tkinter.Button(text="Browse", command=browseFiles)
-button.grid(column=2, row=2, sticky='W')
-
-
-# Watermark Button
-
-wtmrk_button = tkinter.Button(text="Watermark it!", command=apply_watermark)
-wtmrk_text = tkinter.Entry(width=35)
-
+def save_file():
+    file = filedialog.asksaveasfile(mode='wb', defaultextension=".png")
+    if file is None: # asksaveasfile return `None` if dialog closed with "cancel".
+        return
+    IMG.save(file)
 
 # File explorer Label
 
 label_file_explorer = tkinter.Label(text="*upload an image to appose a watermark", font="Arial")
 label_file_explorer.grid(column=2, row=3)
 
+# Browse Button
+
+browse_button = tkinter.Button(text="Browse", command=browseFiles)
+browse_button.grid(column=2, row=2, sticky='W')
+
+
+# Watermark Button
+
+wtmrk_button = tkinter.Button(text="Watermark it!", command=apply_watermark)
+
+# Watermark entry box
+
+wtmrk_text = tkinter.Entry(width=35)
+
+# Save Button
+
+save_button = tkinter.Button(text="Save", command=save_file)
 
 window.mainloop()
