@@ -18,7 +18,7 @@ label.grid(column=1, row=0)
 # file explorer window
 
 def browseFiles():
-    file = filedialog.askopenfilename(
+    file_path = filedialog.askopenfilename(
         # mode='rb',
         initialdir=os.path.expanduser('~/Pictures'),
         title="Select a File",
@@ -27,11 +27,11 @@ def browseFiles():
             ("all files", "*.*")
         )
     )
-    img =  Image.open(file)
-    test = ImageTk.PhotoImage(img)
-    label.config(image=test)
+    img = Image.open(file_path)
+    display_image = ImageTk.PhotoImage(img)
+    label.config(image=display_image)
     label.grid(columnspan=2)
-    label.image = test
+    label.image = display_image
     button.grid(column=1, row=2)
     label_file_explorer.grid(column=2, row=2, sticky='E')
     label_file_explorer.config(text=os.path.basename(file))
