@@ -4,6 +4,7 @@ import os.path
 from PIL import ImageTk, Image, ImageDraw, ImageFont
 
 IMG = None
+IMG_COPY = None
 
 window = tkinter.Tk()
 window.title("Watermarker")
@@ -30,7 +31,7 @@ def browseFiles():
     )
     global IMG
     IMG = Image.open(file_path).convert("RGBA")
-    display_image()
+    display_image(IMG)
 
     # move stuff around, change labels name, etc
 
@@ -44,9 +45,11 @@ def browseFiles():
 
 
 def apply_watermark():
-    width, height = IMG.size
+    global IMG_COPY
+    IMG_COPY = IMG.copy()
+    width, height = IMG_COPY.size
 
-    draw = ImageDraw.Draw(IMG)
+    draw = ImageDraw.Draw(IMG_COPY)
     text = wtmrk_text.get()
 
     font = ImageFont.truetype('/usr/share/fonts/opentype/malayalam/Chilanka-Regular.otf', 26)
@@ -60,11 +63,12 @@ def apply_watermark():
     # draw watermark in the bottom right corner
     draw.text((x, y), text, font=font, fill=(255,255,255,150))
 
-    display_image()
+    display_image(IMG_COPY)
+    wtmrk_text.delete(0, 'end')
     save_button.grid(column=1, row=4, sticky='w')
 
-def display_image():
-    display_img = ImageTk.PhotoImage(IMG)
+def display_image(img):
+    display_img = ImageTk.PhotoImage(img)
     label_img_placeholder.config(image=display_img)
     label_img_placeholder.image = display_img
 
