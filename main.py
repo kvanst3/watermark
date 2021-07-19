@@ -1,11 +1,13 @@
 import tkinter
 from tkinter import filedialog
 import os.path
+from PIL import ImageTk, Image  
 
 window = tkinter.Tk()
 window.title("Watermarker")
 window.minsize(width=500, height=500)
 window.config(padx=10, pady=10)
+
 
 # Title Label
 
@@ -16,31 +18,32 @@ label.grid(column=1, row=0)
 # file explorer window
 
 def browseFiles():
-    file = filedialog.askopenfile(
-        mode='rb',
+    file = filedialog.askopenfilename(
+        # mode='rb',
         initialdir=os.path.expanduser('~/Pictures'),
         title="Select a File",
         filetypes=(
-            ("Jpeg files", "*.jpeg*"),
+            ("Png files", "*.png*"),
             ("all files", "*.*")
         )
     )
+    img =  Image.open(file)
+    test = ImageTk.PhotoImage(img)
+    label.config(image=test)
+    label.grid(columnspan=2)
+    label.image = test
+    button.grid(column=1, row=2)
+    label_file_explorer.grid(column=2, row=2, sticky='E')
+    label_file_explorer.config(text=os.path.basename(file))
 
-    # Change label contents
-    label_file_explorer.configure(text="File Opened: " + os.path.basename(file.name))
-    if file:
-        data = file.read()
-        file.close()
-        print("I got %d bytes from this file." % len(data))
 
-
-
+#Browse Button
 
 button = tkinter.Button(text="Browse", command=browseFiles)
 button.grid(column=2, row=2, sticky='W')
 
 
-# Result Label
+# File explorer Label
 
 label_file_explorer = tkinter.Label(text="*upload an image to appose a watermark", font="Arial")
 label_file_explorer.grid(column=2, row=3)
