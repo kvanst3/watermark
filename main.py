@@ -39,7 +39,7 @@ def browseFiles():
     label_file_explorer.grid(column=2, row=2, sticky='E')
     label_file_explorer.config(text=os.path.basename(file_path))
 
-    wtmrk_button.grid(column=1, row=3, sticky='e')
+    wtmrk_button.grid(column=2, row=3, sticky='e')
     wtmrk_text.grid(column=1, row=3, sticky='w', columnspan=2)
 
 
@@ -61,7 +61,7 @@ def apply_watermark():
     draw.text((x, y), text, font=font, fill=(255,255,255,150))
 
     display_image()
-    save_button.grid(column=2, row=3, sticky='e')
+    save_button.grid(column=1, row=4, sticky='w')
 
 def display_image():
     display_img = ImageTk.PhotoImage(IMG)
